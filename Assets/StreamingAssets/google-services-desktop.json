@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "551247697501",
+    "project_id": "mapmo-65a11",
+    "storage_bucket": "mapmo-65a11.appspot.com",
+    "firebase_url": "https://mapmo-65a11-default-rtdb.firebaseio.com/"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551247697501:android:662a645b05c052bcd31fb4",
+        "android_client_info": {
+          "package_name": "com.WHJM.MapMemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAavicEd4DSSKYTl5XGQIqTQWaIbNX2jUc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
