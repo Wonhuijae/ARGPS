@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GPSManager : MonoBehaviour
@@ -19,6 +20,9 @@ public class GPSManager : MonoBehaviour
     }
     private static GPSManager m_instance;
 
+    private NaverMap mapInstance;
+    private DBManager dbInstance;
+
     public TextMeshProUGUI sampleText;
 
     void Awake()
@@ -28,6 +32,9 @@ public class GPSManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
+        mapInstance = NaverMap.Instance;
+        dbInstance = DBManager.Instance;
     }
 
     IEnumerator Start()
@@ -58,11 +65,17 @@ public class GPSManager : MonoBehaviour
         }
         else
         {
+            float lat = Input.location.lastData.latitude;
+            float lon = Input.location.lastData.longitude;
+
             sampleText.text =
                 "현재 위치: "+
-                Input.location.lastData.latitude + " " +
-                Input.location.lastData.longitude + " " +
+                lat + " " +
+                lon + " " +
                 Input.location.lastData.horizontalAccuracy;
+
+            // dbInstance.WriteDB(lat.ToString(), lon.ToString());
+            // mapInstance.SetCurPos(lat, lon);
         }
     }
 }

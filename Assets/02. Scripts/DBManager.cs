@@ -1,6 +1,8 @@
 using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,11 +61,7 @@ public class DBManager : MonoBehaviour
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        Memo testMemo = new Memo("Memo", 12.5f, 13.6f);
-        testMemo.adress = "주소";
-        testMemo.road = "오리로";
-
-        WriteDB(testMemo);
+        ReadDB();
     }
 
     private void WriteDB(Memo _memo)
@@ -71,5 +69,28 @@ public class DBManager : MonoBehaviour
         string json = JsonUtility.ToJson(_memo);
 
         dbReference.Child("Memos").Child(_memo.road).SetRawJsonValueAsync(json);
+    }
+
+    public async void WriteDB(string key, string value)
+    {
+        await dbReference.Child("Test").Child(key).SetValueAsync(value);
+    }
+
+    private void ReadDB()
+    {
+        FirebaseDatabase.DefaultInstance
+            .GetReference("Test").Child("responseBody")
+            .GetValueAsync().ContinueWithOnMainThread(
+                task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        DataSnapshot snapshot = task.Result;
+
+                        string value = snapshot.GetRawJsonValue().ToString();
+                        Debug.Log(value);
+                    }
+                }
+            );
     }
 }

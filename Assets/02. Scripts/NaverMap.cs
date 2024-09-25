@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
+using TMPro;
+using UnityEngine.Networking;
+using System;
+using Unity.VisualScripting;
 
 public class NaverMap : MonoBehaviour
 {
+    public TextMeshProUGUI text;
+
     public static NaverMap Instance
     {
         get
         {
-            if(m_instance == null)
+            if (m_instance == null)
             {
                 m_instance = FindObjectOfType<NaverMap>();
             }
@@ -20,23 +28,28 @@ public class NaverMap : MonoBehaviour
     }
     private static NaverMap m_instance;
 
+    private DBManager dbInstance;
+
+    private float curLatitude; // 위도
+    private float curLongitude; // 경도
+
     private string geocodeAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
     private string staticMapAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&center=127.1054221,37.3591614&level=16";
     private string clientID = "m43fqgqgf6";
     private string clientSecret = "MPaASwSsykcbLnaIyfjLUl5vzsvsEIA3Lrzp8mZV";
 
-    private static readonly HttpClient client = new HttpClient();
-
     private void Awake()
     {
-        if(Instance != this)
+        if (Instance != this)
         {
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
+        dbInstance = DBManager.Instance;
     }
 
-    public async Task GetAddress(float _latitude, float _longitude)
+    public void GetAddress(float _latitude, float _longitude)
     {
         /*
          * 네이버 Reverse Geocoding 사용 가이드
@@ -60,24 +73,57 @@ public class NaverMap : MonoBehaviour
 
         string url = $"https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords={coords}&sourcecrs={sourceCrs}&orders={orders}&output={output}";
 
-        client.DefaultRequestHeaders.Add("X-NCP-APIGW-API-KEY-ID", clientID);
-        client.DefaultRequestHeaders.Add("X-NCP-APIGW-API-KEY", clientSecret);
+        StartCoroutine(GetRequest(url));
+    }
 
-        HttpResponseMessage response = await client.GetAsync(url);
+    IEnumerator GetRequest(string _url)
+    {
+        dbInstance.WriteDB("url", _url);
 
-        if(response.IsSuccessStatusCode)
+        using (UnityWebRequest request = UnityWebRequest.Get(_url))
         {
-            string resposeBody = await response.Content.ReadAsStringAsync();
-            ParsingAddress(resposeBody);
-        }
-        else
-        {
-            Debug.Log($"Error: {response.StatusCode}");
+            dbInstance.WriteDB("urlafterreq", _url);
+
+            request.SetRequestHeader("X-NCP-APIGW-API-KEY-ID", clientID);
+            request.SetRequestHeader("X-NCP-APIGW-API-KEY", clientSecret);
+
+            yield return request.SendWebRequest();
+
+            foreach (var h in request.GetResponseHeaders())
+            {
+                dbInstance.WriteDB(h.Key, h.Value);
+            }
+
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                dbInstance.WriteDB("requestFail", request.error);
+            }
+            else
+            {
+                string resposeBody = request.downloadHandler.text;
+                dbInstance.WriteDB("responseBody", resposeBody);
+
+                JObject json = JObject.Parse(resposeBody);
+
+                foreach (var p in json.Properties())
+                {
+                    dbInstance.WriteDB(p.Name, p.Value.ToString());
+                }
+            }
         }
     }
 
     private void ParsingAddress(string _json)
     {
         Memo memo = new Memo();
+    }
+
+    public void SetCurPos(float _lati, float _long)
+    {
+        curLatitude = _lati;
+        curLongitude = _long;
+
+        GetAddress(curLatitude, curLongitude);
     }
 }
