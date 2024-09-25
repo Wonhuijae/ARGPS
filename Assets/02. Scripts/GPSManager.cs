@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GPSManager : MonoBehaviour
@@ -19,6 +20,9 @@ public class GPSManager : MonoBehaviour
     }
     private static GPSManager m_instance;
 
+    private NaverMap mapInstance;
+    private DBManager dbInstance;
+
     public TextMeshProUGUI sampleText;
 
     void Awake()
@@ -28,11 +32,14 @@ public class GPSManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
+        mapInstance = NaverMap.Instance;
+        dbInstance = DBManager.Instance;
     }
 
     IEnumerator Start()
     {
-        // À§Ä¡ Á¤º¸ ±ÇÇÑ ºñÇã¿ë ¶Ç´Â GPS ¼­ºñ½º ºñÈ°¼ºÈ­
+        // ìœ„ì¹˜ ì •ë³´ ê¶Œí•œ ë¹„í—ˆìš© ë˜ëŠ” GPS ì„œë¹„ìŠ¤ ë¹„í™œì„±í™”
         if (!Input.location.isEnabledByUser) yield break;
 
         Input.location.Start();
@@ -47,22 +54,28 @@ public class GPSManager : MonoBehaviour
 
         if (maxWait < 1) 
         {
-            sampleText.text = "½Ã°£ÃÊ°ú";
+            sampleText.text = "ì‹œê°„ì´ˆê³¼";
             yield break;
         }
 
         if(Input.location.status == LocationServiceStatus.Failed)
         {
-            sampleText.text = "À§Ä¡ Á¤º¸¸¦ °¡Á®¿ÀÁö ¸øÇß½À´Ï´Ù.";
+            sampleText.text = "ìœ„ì¹˜ ì •ë³´ë¥¼ ê°€ì ¸ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.";
             yield break;
         }
         else
         {
+            float lat = Input.location.lastData.latitude;
+            float lon = Input.location.lastData.longitude;
+
             sampleText.text =
-                "ÇöÀç À§Ä¡: "+
-                Input.location.lastData.latitude + " " +
-                Input.location.lastData.longitude + " " +
+                "í˜„ì¬ ìœ„ì¹˜: "+
+                lat + " " +
+                lon + " " +
                 Input.location.lastData.horizontalAccuracy;
+
+            // dbInstance.WriteDB(lat.ToString(), lon.ToString());
+            // mapInstance.SetCurPos(lat, lon);
         }
     }
 }

@@ -1,15 +1,19 @@
+using Firebase;
 using Firebase.Database;
+using Firebase.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ÀúÀåµÉ µ¥ÀÌÅÍ Å¬·¡½º
+// ì €ìž¥ë  ë°ì´í„° í´ëž˜ìŠ¤
 public class Memo
 {
     public string memo;
-    public float latitude; // À§µµ
-    public float longitude; // °æµµ
-    public string adress; // ÁÖ¼Ò
+    public float latitude; // ìœ„ë„
+    public float longitude; // ê²½ë„
+    public string adress; // ì£¼ì†Œ
     public string road;
 
     public Memo()
@@ -57,13 +61,36 @@ public class DBManager : MonoBehaviour
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        
+        ReadDB();
     }
 
-    private void WriteNewStore(Memo _memo)
+    private void WriteDB(Memo _memo)
     {
         string json = JsonUtility.ToJson(_memo);
 
         dbReference.Child("Memos").Child(_memo.road).SetRawJsonValueAsync(json);
+    }
+
+    public async void WriteDB(string key, string value)
+    {
+        await dbReference.Child("Test").Child(key).SetValueAsync(value);
+    }
+
+    private void ReadDB()
+    {
+        FirebaseDatabase.DefaultInstance
+            .GetReference("Test").Child("responseBody")
+            .GetValueAsync().ContinueWithOnMainThread(
+                task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        DataSnapshot snapshot = task.Result;
+
+                        string value = snapshot.GetRawJsonValue().ToString();
+                        Debug.Log(value);
+                    }
+                }
+            );
     }
 }
