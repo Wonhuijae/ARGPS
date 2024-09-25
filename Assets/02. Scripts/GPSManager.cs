@@ -32,7 +32,7 @@ public class GPSManager : MonoBehaviour
 
     IEnumerator Start()
     {
-        // À§Ä¡ Á¤º¸ ±ÇÇÑ ºñÇã¿ë ¶Ç´Â GPS ¼­ºñ½º ºñÈ°¼ºÈ­
+        // ìœ„ì¹˜ ì •ë³´ ê¶Œí•œ ë¹„í—ˆìš© ë˜ëŠ” GPS ì„œë¹„ìŠ¤ ë¹„í™œì„±í™”
         if (!Input.location.isEnabledByUser) yield break;
 
         Input.location.Start();
@@ -47,19 +47,19 @@ public class GPSManager : MonoBehaviour
 
         if (maxWait < 1) 
         {
-            sampleText.text = "½Ã°£ÃÊ°ú";
+            sampleText.text = "ì‹œê°„ì´ˆê³¼";
             yield break;
         }
 
         if(Input.location.status == LocationServiceStatus.Failed)
         {
-            sampleText.text = "À§Ä¡ Á¤º¸¸¦ °¡Á®¿ÀÁö ¸øÇß½À´Ï´Ù.";
+            sampleText.text = "ìœ„ì¹˜ ì •ë³´ë¥¼ ê°€ì ¸ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.";
             yield break;
         }
         else
         {
             sampleText.text =
-                "ÇöÀç À§Ä¡: "+
+                "í˜„ì¬ ìœ„ì¹˜: "+
                 Input.location.lastData.latitude + " " +
                 Input.location.lastData.longitude + " " +
                 Input.location.lastData.horizontalAccuracy;

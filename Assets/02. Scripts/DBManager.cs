@@ -1,15 +1,17 @@
+using Firebase;
 using Firebase.Database;
+using Firebase.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ÀúÀåµÉ µ¥ÀÌÅÍ Å¬·¡½º
+// ì €ì¥ë  ë°ì´í„° í´ë˜ìŠ¤
 public class Memo
 {
     public string memo;
-    public float latitude; // À§µµ
-    public float longitude; // °æµµ
-    public string adress; // ÁÖ¼Ò
+    public float latitude; // ìœ„ë„
+    public float longitude; // ê²½ë„
+    public string adress; // ì£¼ì†Œ
     public string road;
 
     public Memo()
@@ -57,10 +59,14 @@ public class DBManager : MonoBehaviour
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        
+        Memo testMemo = new Memo("Memo", 12.5f, 13.6f);
+        testMemo.adress = "ì£¼ì†Œ";
+        testMemo.road = "ì˜¤ë¦¬ë¡œ";
+
+        WriteDB(testMemo);
     }
 
-    private void WriteNewStore(Memo _memo)
+    private void WriteDB(Memo _memo)
     {
         string json = JsonUtility.ToJson(_memo);
 

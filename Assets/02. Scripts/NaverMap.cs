@@ -39,22 +39,22 @@ public class NaverMap : MonoBehaviour
     public async Task GetAddress(float _latitude, float _longitude)
     {
         /*
-         * ³×ÀÌ¹ö Reverse Geocoding »ç¿ë °¡ÀÌµå
+         * ë„¤ì´ë²„ Reverse Geocoding ì‚¬ìš© ê°€ì´ë“œ
          * curl "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&
-         *      coords={ÀÔ·Â_ÁÂÇ¥}&sourcecrs={ÁÂÇ¥°è}&orders={º¯È¯_ÀÛ¾÷_ÀÌ¸§}&output={Ãâ·Â_Çü½Ä}"
-	     *   -H "X-NCP-APIGW-API-KEY-ID: {¾ÖÇÃ¸®ÄÉÀÌ¼Ç µî·Ï ½Ã ¹ß±Ş¹ŞÀº client id°ª}" \
-	     *   -H "X-NCP-APIGW-API-KEY: {¾ÖÇÃ¸®ÄÉÀÌ¼Ç µî·Ï ½Ã ¹ß±Ş¹ŞÀº client secret°ª}" -v
+         *      coords={ì…ë ¥_ì¢Œí‘œ}&sourcecrs={ì¢Œí‘œê³„}&orders={ë³€í™˜_ì‘ì—…_ì´ë¦„}&output={ì¶œë ¥_í˜•ì‹}"
+	     *   -H "X-NCP-APIGW-API-KEY-ID: {ì• í”Œë¦¬ì¼€ì´ì…˜ ë“±ë¡ ì‹œ ë°œê¸‰ë°›ì€ client idê°’}" \
+	     *   -H "X-NCP-APIGW-API-KEY: {ì• í”Œë¦¬ì¼€ì´ì…˜ ë“±ë¡ ì‹œ ë°œê¸‰ë°›ì€ client secretê°’}" -v
 	     *   
-         * ÇÊ¼ö ÆÄ¶ó¹ÌÅÍ
-         * coords(string)(°æµµ,À§µµ)
+         * í•„ìˆ˜ íŒŒë¼ë¯¸í„°
+         * coords(string)(ê²½ë„,ìœ„ë„)
          *
-         * ÇÊ¿ä ÆÄ¶ó¹ÌÅÍ
-         * orders = "roadaddr" (µµ·Î¸í ÁÖ¼Ò ¿äÃ»)
-         * output = "json" (json Çü½Ä Ãâ·Â)
+         * í•„ìš” íŒŒë¼ë¯¸í„°
+         * orders = "roadaddr" (ë„ë¡œëª… ì£¼ì†Œ ìš”ì²­)
+         * output = "json" (json í˜•ì‹ ì¶œë ¥)
          */
 
-        string coords = $"{_longitude},{_latitude}"; // À§µµ, °æµµ
-        string sourceCrs = "epsg:4326"; // À§°æµµ ÁÂÇ¥°è(±âº»°ª, 4326)
+        string coords = $"{_longitude},{_latitude}"; // ìœ„ë„, ê²½ë„
+        string sourceCrs = "epsg:4326"; // ìœ„ê²½ë„ ì¢Œí‘œê³„(ê¸°ë³¸ê°’, 4326)
         string orders = "roadaddr";
         string output = "json";
 
