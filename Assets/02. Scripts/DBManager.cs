@@ -3,6 +3,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -86,8 +87,9 @@ public class DBManager : MonoBehaviour
                     if (task.IsCompleted)
                     {
                         DataSnapshot snapshot = task.Result;
+                        Debug.Log(snapshot.GetRawJsonValue());
 
-                        string value = snapshot.GetRawJsonValue().ToString();
+                        string value = snapshot.GetRawJsonValue();
                         Debug.Log(value);
                     }
                 }
