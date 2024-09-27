@@ -32,9 +32,10 @@ public class NaverMap : MonoBehaviour
 
     private float curLatitude; // 위도
     private float curLongitude; // 경도
-
-    private string geocodeAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
+    
     private string staticMapAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&center=127.1054221,37.3591614&level=16";
+    private string geocodeAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
+    private string reverseGeoAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&";
     private string clientID = "m43fqgqgf6";
     private string clientSecret = "MPaASwSsykcbLnaIyfjLUl5vzsvsEIA3Lrzp8mZV";
 
@@ -47,6 +48,11 @@ public class NaverMap : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         dbInstance = DBManager.Instance;
+    }
+
+    public void GetMap()
+    {
+
     }
 
     public void GetAddress(float _latitude, float _longitude)
@@ -71,7 +77,7 @@ public class NaverMap : MonoBehaviour
         string orders = "roadaddr";
         string output = "json";
 
-        string url = $"https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords={coords}&sourcecrs={sourceCrs}&orders={orders}&output={output}";
+        string url = $"{reverseGeoAPIUrl}coords={coords}&sourcecrs={sourceCrs}&orders={orders}&output={output}";
 
         StartCoroutine(GetRequest(url));
     }
