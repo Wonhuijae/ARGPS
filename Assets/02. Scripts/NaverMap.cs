@@ -9,10 +9,12 @@ using TMPro;
 using UnityEngine.Networking;
 using System;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class NaverMap : MonoBehaviour
 {
     public TextMeshProUGUI text;
+    public RawImage mapImage;
 
     public static NaverMap Instance
     {
@@ -29,11 +31,13 @@ public class NaverMap : MonoBehaviour
     private static NaverMap m_instance;
 
     private DBManager dbInstance;
+    private AppManager appInstance;
 
     private float curLatitude; // 위도
     private float curLongitude; // 경도
+    private int zoomLevel = 15;
     
-    private string staticMapAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&center=127.1054221,37.3591614&level=16";
+    private string staticMapAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster";
     private string geocodeAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
     private string reverseGeoAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&";
     private string clientID = "m43fqgqgf6";
@@ -48,11 +52,47 @@ public class NaverMap : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         dbInstance = DBManager.Instance;
+        appInstance = AppManager.Instance;
     }
 
-    public void GetMap()
+    public void GetMapUrlAddress()
+    {
+        /*
+         * 네이버 Static Map API 사용 가이드
+         * "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?
+         * w=(이미지 너비)&h=(이미지 높이)&
+         * center=(중심점이 될 위도, 경도)
+         * &level=(줌 레벨)
+         * &X-NCP-APIGW-API-KEY-ID={API Gateway API Key ID}"
+         */
+
+        RectTransform t = mapImage.GetComponent<RectTransform>();
+        string url = $"{staticMapAPIUrl}?w=540&h=920&center={curLongitude},{curLatitude}&level={zoomLevel}&markers=type:d|size:tiny|pos:{curLongitude} {curLatitude}";
+
+        StartCoroutine(GetMapImage(url));
+    }
+
+    IEnumerator GetMapImage(string _url)
     {
 
+        using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(_url))
+        {
+            request.SetRequestHeader("X-NCP-APIGW-API-KEY-ID", clientID);
+            request.SetRequestHeader("X-NCP-APIGW-API-KEY", clientSecret);
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                appInstance.ShowToastMsg(request.error);
+            }
+            else
+            {
+                Texture2D t = DownloadHandlerTexture.GetContent(request);
+                mapImage.texture = t;
+            }
+        }
     }
 
     public void GetAddress(float _latitude, float _longitude)
@@ -130,6 +170,7 @@ public class NaverMap : MonoBehaviour
         curLatitude = _lati;
         curLongitude = _long;
 
-        GetAddress(curLatitude, curLongitude);
+        GetMapUrlAddress();
+        //GetAddress(curLatitude, curLongitude);
     }
 }

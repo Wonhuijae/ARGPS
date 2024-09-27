@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-#if PLATFORM_ANDROID
 using UnityEngine.Android;
 using UnityEngine.InputSystem;
-#endif
 
 public class GPSManager : MonoBehaviour
 {
@@ -26,10 +24,9 @@ public class GPSManager : MonoBehaviour
 
     private NaverMap mapInstance;
     private DBManager dbInstance;
+    private AppManager appInstance;
 
     public TextMeshProUGUI sampleText;
-
-    public GameObject popUP;
 
     void Awake()
     {
@@ -41,11 +38,12 @@ public class GPSManager : MonoBehaviour
 
         mapInstance = NaverMap.Instance;
         dbInstance = DBManager.Instance;
+        appInstance = AppManager.Instance;
 
-        if (!Input.location.isEnabledByUser) popUP.SetActive(true);
-        else popUP.SetActive(false);
 
+        Debug.Log(appInstance == null);
         RequestPermisson();
+        
     }
 
     void RequestPermisson()
@@ -64,10 +62,13 @@ public class GPSManager : MonoBehaviour
 
     IEnumerator WaitForPermission()
     {
+        // 최초 권한 설정 확인
+        yield return new WaitForSeconds(5f);
+
         while (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
         {
-            yield return new WaitForSeconds(10f);
-
+            yield return new WaitForSeconds(2f);
+            appInstance.ShowToastMsg("위치 권한을 허용해주세요.");
             using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             {
                 // 현재 액티비티
@@ -94,12 +95,10 @@ public class GPSManager : MonoBehaviour
         // GPS Off시
         if(!Input.location.isEnabledByUser)
         {
-            popUP.SetActive(true);
             StartCoroutine(WaitForGPS());
         }
         else
         {
-            popUP.SetActive(false);
             StartCoroutine(StartGPS());
         }
     }
@@ -108,11 +107,16 @@ public class GPSManager : MonoBehaviour
     {
         while(!Input.location.isEnabledByUser)
         {
-            yield return new WaitForSeconds(5f);
-            popUP.SetActive(true);
+            appInstance.ShowToastMsg("GPS를 켜주세요");
+            
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent", "android.settings.LOCATION_SOURCE_SETTINGS");
+
+            currentActivity.Call("startActivity", intent);
+            yield return new WaitForSeconds(2f);
         }
 
-        popUP.SetActive(false);
         StartCoroutine(StartGPS());
     }
 
@@ -151,7 +155,7 @@ public class GPSManager : MonoBehaviour
                 Input.location.lastData.horizontalAccuracy;
 
             // dbInstance.WriteDB(lat.ToString(), lon.ToString());
-            // mapInstance.SetCurPos(lat, lon);
+            mapInstance.SetCurPos(lat, lon);
         }
     }
 }
