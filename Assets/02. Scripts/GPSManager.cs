@@ -1,3 +1,4 @@
+using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -25,6 +26,7 @@ public class GPSManager : MonoBehaviour
     private NaverMap mapInstance;
     private DBManager dbInstance;
     private AppManager appInstance;
+    public AbstractMap abstractMap;
 
     public TextMeshProUGUI sampleText;
 
@@ -156,6 +158,7 @@ public class GPSManager : MonoBehaviour
 
             // dbInstance.WriteDB(lat.ToString(), lon.ToString());
             mapInstance.SetCurPos(lat, lon);
+            abstractMap.Options.locationOptions.latitudeLongitude = lat + "," + lon;
         }
     }
 }
