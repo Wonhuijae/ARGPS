@@ -1,6 +1,7 @@
 using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
+using Mapbox.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,8 +13,8 @@ using UnityEngine;
 public class Memo
 {
     public string memo;
-    public float latitude; // 위도
-    public float longitude; // 경도
+    public double latitude; // 위도
+    public double longitude; // 경도
     public string adress; // 주소
     public string road;
 
@@ -22,7 +23,7 @@ public class Memo
 
     }
 
-    public Memo(string memo, float latitude, float longitude)
+    public Memo(string memo, double latitude, double longitude)
     {
         this.memo = memo;
         this.latitude = latitude;
@@ -33,11 +34,17 @@ public class Memo
     {
 
     }
+
+    public Vector2d ConverToVector2d()
+    {
+        return new Vector2d(latitude, longitude);
+    }
 }
 
 public class DBManager : MonoBehaviour
 {
     DatabaseReference dbReference;
+    public SpawnMemo spawnMemo;
 
     public static DBManager Instance
     {
@@ -62,37 +69,70 @@ public class DBManager : MonoBehaviour
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
 
+        
+
+        Memo t = new Memo("평생학습원", 37.46668439003358, 126.86975035983849);
+        t.adress = "경기도 광명시 철망산로 2";
+        t.road = "철망산로";
+        WriteDB(t);
+        
         ReadDB();
     }
 
-    private void WriteDB(Memo _memo)
+    public async void WriteDB(Memo _memo)
     {
         string json = JsonUtility.ToJson(_memo);
-
-        dbReference.Child("Memos").Child(_memo.road).SetRawJsonValueAsync(json);
-    }
-
-    public async void WriteDB(string key, string value)
-    {
-        await dbReference.Child("Test").Child(key).SetValueAsync(value);
+        await dbReference.Child("Memos").Child(_memo.road).SetRawJsonValueAsync(json);
     }
 
     private void ReadDB()
     {
         FirebaseDatabase.DefaultInstance
-            .GetReference("Test").Child("responseBody")
+            .GetReference("Memos")
             .GetValueAsync().ContinueWithOnMainThread(
                 task =>
                 {
                     if (task.IsCompleted)
                     {
                         DataSnapshot snapshot = task.Result;
-                        Debug.Log(snapshot.GetRawJsonValue());
+                        Dictionary<string, Memo> memos = new Dictionary<string, Memo>();
 
-                        string value = snapshot.GetRawJsonValue();
-                        Debug.Log(value);
+                        foreach(DataSnapshot s in snapshot.Children)
+                        {
+                            Memo m = JsonUtility.FromJson<Memo>(s.GetRawJsonValue());
+                            memos.Add(m.road, m);
+                            spawnMemo.LoadMemo(m);
+                            Debug.Log(m.road);
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Load Fail");
                     }
                 }
             );
+    }
+
+    public async void TestWriteDB(string key, string value)
+    {
+        await dbReference.Child("Test").Child(key).SetValueAsync(value);
+    }
+    private void TestReadDB()
+    {
+        FirebaseDatabase.DefaultInstance
+           .GetReference("Test").Child("responseBody")
+           .GetValueAsync().ContinueWithOnMainThread(
+               task =>
+               {
+                   if (task.IsCompleted)
+                   {
+                       DataSnapshot snapshot = task.Result;
+                       Debug.Log(snapshot.GetRawJsonValue());
+
+                       string value = snapshot.GetRawJsonValue();
+                       Debug.Log(value);
+                   }
+               }
+           );
     }
 }

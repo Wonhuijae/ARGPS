@@ -6,38 +6,41 @@
 	using Mapbox.Unity.MeshGeneration.Factories;
 	using Mapbox.Unity.Utilities;
 	using System.Collections.Generic;
+    using global::Unity.VisualScripting;
 
 	public class SpawnOnMap : MonoBehaviour
 	{
 		[SerializeField]
-		AbstractMap _map;
+        protected AbstractMap _map;
 
 		[SerializeField]
 		[Geocode]
-		string[] _locationStrings;
-		Vector2d[] _locations;
+        protected List<string> _locationStrings;
+        protected List<Vector2d> _locations;
 
 		[SerializeField]
-		float _spawnScale = 100f;
+        protected float _spawnScale = 100f;
 
 		[SerializeField]
-		GameObject _markerPrefab;
+		protected GameObject _markerPrefab;
 
-		List<GameObject> _spawnedObjects;
+        protected List<GameObject> _spawnedObjects;
 
-		void Start()
+		protected virtual void Start()
 		{
-			_locations = new Vector2d[_locationStrings.Length];
+            _locationStrings = new List<string>();
+            _locations = new List<Vector2d>();
 			_spawnedObjects = new List<GameObject>();
-			for (int i = 0; i < _locationStrings.Length; i++)
+
+			for (int i = 0; i < _locationStrings.Count; i++)
 			{
 				var locationString = _locationStrings[i];
 				_locations[i] = Conversions.StringToLatLon(locationString);
 				var instance = Instantiate(_markerPrefab);
-				instance.transform.localPosition = _map.GeoToWorldPosition(_locations[i], true);
-				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-				_spawnedObjects.Add(instance);
-			}
+                instance.transform.localPosition = _map.GeoToWorldPosition(_locations[i], true);
+                instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+                _spawnedObjects.Add(instance);
+            }
 		}
 
 		private void Update()
@@ -50,6 +53,16 @@
 				spawnedObject.transform.localPosition = _map.GeoToWorldPosition(location, true);
 				spawnedObject.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
 			}
-		}
-	}
+        }
+
+        public void AddMarker(GameObject _instance, string _locString, Vector2d _loc)
+        {
+            _instance.transform.localPosition = _map.GeoToWorldPosition(_loc, true);
+            _instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+			
+            _spawnedObjects.Add(_instance);
+			_locationStrings.Add(_locString);
+			_locations.Add(_loc);
+        }
+    }
 }

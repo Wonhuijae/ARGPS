@@ -156,7 +156,7 @@ public class GPSManager : MonoBehaviour
                 lon + " " +
                 Input.location.lastData.horizontalAccuracy;
 
-            // dbInstance.WriteDB(lat.ToString(), lon.ToString());
+            // dbInstance.TestWriteDB(lat.ToString(), lon.ToString());
             mapInstance.SetCurPos(lat, lon);
             abstractMap.Options.locationOptions.latitudeLongitude = lat + "," + lon;
         }

@@ -124,11 +124,11 @@ public class NaverMap : MonoBehaviour
 
     IEnumerator GetRequest(string _url)
     {
-        dbInstance.WriteDB("url", _url);
+        dbInstance.TestWriteDB("url", _url);
 
         using (UnityWebRequest request = UnityWebRequest.Get(_url))
         {
-            dbInstance.WriteDB("urlafterreq", _url);
+            dbInstance.TestWriteDB("urlafterreq", _url);
 
             request.SetRequestHeader("X-NCP-APIGW-API-KEY-ID", clientID);
             request.SetRequestHeader("X-NCP-APIGW-API-KEY", clientSecret);
@@ -137,24 +137,24 @@ public class NaverMap : MonoBehaviour
 
             foreach (var h in request.GetResponseHeaders())
             {
-                dbInstance.WriteDB(h.Key, h.Value);
+                dbInstance.TestWriteDB(h.Key, h.Value);
             }
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
                 request.result == UnityWebRequest.Result.ProtocolError)
             {
-                dbInstance.WriteDB("requestFail", request.error);
+                dbInstance.TestWriteDB("requestFail", request.error);
             }
             else
             {
                 string resposeBody = request.downloadHandler.text;
-                dbInstance.WriteDB("responseBody", resposeBody);
+                dbInstance.TestWriteDB("responseBody", resposeBody);
 
                 JObject json = JObject.Parse(resposeBody);
 
                 foreach (var p in json.Properties())
                 {
-                    dbInstance.WriteDB(p.Name, p.Value.ToString());
+                    dbInstance.TestWriteDB(p.Name, p.Value.ToString());
                 }
             }
         }
