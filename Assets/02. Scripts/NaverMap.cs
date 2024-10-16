@@ -33,8 +33,8 @@ public class NaverMap : MonoBehaviour
     private DBManager dbInstance;
     private AppManager appInstance;
 
-    private float curLatitude; // 위도
-    private float curLongitude; // 경도
+    private double curLatitude; // 위도
+    private double curLongitude; // 경도
     private int zoomLevel = 15;
     
     private string staticMapAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster";
@@ -165,7 +165,7 @@ public class NaverMap : MonoBehaviour
         Memo memo = new Memo();
     }
 
-    public void SetCurPos(float _lati, float _long)
+    public void SetCurPos(double _lati, double _long)
     {
         curLatitude = _lati;
         curLongitude = _long;

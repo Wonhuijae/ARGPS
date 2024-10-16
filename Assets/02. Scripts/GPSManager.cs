@@ -1,4 +1,5 @@
 using Mapbox.Unity.Map;
+using Mapbox.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -127,38 +128,49 @@ public class GPSManager : MonoBehaviour
         Input.location.Start();
 
         int maxWait = 20;
-        while(Input.location.status == LocationServiceStatus.Initializing &&
-            maxWait > 0)
+        while (true)
         {
-            yield return new WaitForSeconds(1);
-            maxWait--;
-        }
+            while (Input.location.status == LocationServiceStatus.Initializing &&
+                maxWait > 0)
+            {
+                yield return new WaitForSeconds(1);
+                maxWait--;
+            }
 
-        if (maxWait < 1) 
-        {
-            sampleText.text = "시간초과";
-            yield break;
-        }
+            if (maxWait < 1)
+            {
+                sampleText.text = "시간초과";
+                yield break;
+            }
 
-        if(Input.location.status == LocationServiceStatus.Failed)
-        {
-            sampleText.text = "위치 정보를 가져오지 못했습니다.";
-            yield break;
-        }
-        else
-        {
-            float lat = Input.location.lastData.latitude;
-            float lon = Input.location.lastData.longitude;
+            if (Input.location.status == LocationServiceStatus.Failed)
+            {
+                sampleText.text = "위치 정보를 가져오지 못했습니다.";
+                yield break;
+            }
+            else
+            {
+                double lat = Input.location.lastData.latitude;
+                double lon = Input.location.lastData.longitude;
 
-            sampleText.text =
-                "현재 위치: "+
-                lat + " " +
-                lon + " " +
-                Input.location.lastData.horizontalAccuracy;
+                sampleText.text =
+                    "현재 위치: " +
+                    lat + " " +
+                    lon + " " +
+                    Input.location.lastData.horizontalAccuracy;
 
-            // dbInstance.TestWriteDB(lat.ToString(), lon.ToString());
-            mapInstance.SetCurPos(lat, lon);
-            abstractMap.Options.locationOptions.latitudeLongitude = lat + "," + lon;
+                // dbInstance.TestWriteDB(lat.ToString(), lon.ToString());
+                mapInstance.SetCurPos(lat, lon);
+                if (abstractMap.InitializeOnStart == true)
+                {
+                    Vector2d initPos = new Vector2d(lat, lon);
+                    abstractMap.Initialize(initPos, 15);
+                }
+                abstractMap.Options.locationOptions.latitudeLongitude = lat + "," + lon;
+                abstractMap.UpdateMap();
+            }
+
+            yield return new WaitForSeconds(5);
         }
     }
 }
