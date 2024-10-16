@@ -7,12 +7,13 @@ namespace Mapbox.Unity.Location
 	using UnityEngine;
 	using Mapbox.Unity.Map;
 	using System.Text.RegularExpressions;
+    using TMPro;
 
-	/// <summary>
-	/// Singleton factory to allow easy access to various LocationProviders.
-	/// This is meant to be attached to a game object.
-	/// </summary>
-	public class LocationProviderFactory : MonoBehaviour
+    /// <summary>
+    /// Singleton factory to allow easy access to various LocationProviders.
+    /// This is meant to be attached to a game object.
+    /// </summary>
+    public class LocationProviderFactory : MonoBehaviour
 	{
 		[SerializeField]
 		public AbstractMap mapManager;
@@ -34,6 +35,7 @@ namespace Mapbox.Unity.Location
 		[SerializeField]
 		bool _dontDestroyOnLoad;
 
+		public TextMeshProUGUI sampleText;
 
 		/// <summary>
 		/// The singleton instance of this factory.
@@ -135,7 +137,7 @@ namespace Mapbox.Unity.Location
 
 			InjectEditorLocationProvider();
 			InjectDeviceLocationProvider();
-		}
+        }
 
 		/// <summary>
 		/// Injects the editor location provider.
@@ -160,10 +162,14 @@ namespace Mapbox.Unity.Location
 			Match match = regex.Match(SystemInfo.operatingSystem); // eg 'Android OS 8.1.0 / API-27 (OPM2.171019.029/4657601)'
 			if (match.Success) { int.TryParse(match.Groups[0].Value, out AndroidApiVersion); }
 			Debug.LogFormat("{0} => API version: {1}", SystemInfo.operatingSystem, AndroidApiVersion);
+			sampleText.text = (Application.platform == RuntimePlatform.Android).ToString()
+				+ " " + (null != _deviceLocationProviderAndroid).ToString()
+				+ " " + (_deviceLocationProviderAndroid.enabled).ToString()
+				+ " " + (_deviceLocationProviderAndroid.transform.gameObject.activeInHierarchy).ToString();
 
-			// only inject native provider if platform requirement is met
-			// and script itself as well as parent game object are active
-			if (Application.platform == RuntimePlatform.Android
+            // only inject native provider if platform requirement is met
+            // and script itself as well as parent game object are active
+            if (Application.platform == RuntimePlatform.Android
 				&& null != _deviceLocationProviderAndroid
 				&& _deviceLocationProviderAndroid.enabled
 				&& _deviceLocationProviderAndroid.transform.gameObject.activeInHierarchy
@@ -175,6 +181,7 @@ namespace Mapbox.Unity.Location
 			{
 				Debug.LogFormat("LocationProviderFactory: Injected native Android DEVICE Location Provider - {0}", _deviceLocationProviderAndroid.GetType());
 				DefaultLocationProvider = _deviceLocationProviderAndroid;
+				sampleText.text = _deviceLocationProviderAndroid.transform.gameObject.name;
 			}
 			else
 			{

@@ -120,6 +120,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4310658642812482}
   - component: {fileID: 114105500206378512}
+  - component: {fileID: 8122019832646641723}
   - component: {fileID: 114086566548189782}
   m_Layer: 0
   m_Name: Map
@@ -136,7 +137,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1094528686802348}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -158,7 +159,7 @@ MonoBehaviour:
   _options:
     locationOptions:
       latitudeLongitude: 37.566679, 126.978291
-      zoom: 16
+      zoom: 16.9
     extentOptions:
       extentType: 1
       defaultExtents:
@@ -182,11 +183,11 @@ MonoBehaviour:
       scalingType: 1
       unityTileSize: 100
     loadingTexture: {fileID: 2800000, guid: e2896a92727704803a9c422b043eae89, type: 3}
-    tileMaterial: {fileID: 2100000, guid: b9f23e9bce724fa4daac57ecded470b8, type: 2}
+    tileMaterial: {fileID: 0}
   _initializeOnStart: 0
   _imagery:
     _layerProperty:
-      sourceType: 6
+      sourceType: 1
       sourceOptions:
         isActive: 1
         layerSource:
@@ -267,7 +268,7 @@ MonoBehaviour:
           sourceId: 
           isActive: 1
           sublayerName: Untitled
-          geometryType: 2
+          geometryType: 1
           layerName: building
           snapToTerrain: 1
           combineMeshes: 0
@@ -276,17 +277,17 @@ MonoBehaviour:
           MiterLimit: 0.2
           RoundLimit: 1.05
           JoinType: 1
-          CapType: 1
+          CapType: 3
         filterOptions:
           _selectedLayerName: building
           filters: []
           combinerType: 0
         extrusionOptions:
-          _selectedLayerName: 
+          _selectedLayerName: building
           extrusionType: 1
           extrusionGeometryType: 0
           propertyName: height
-          propertyDescription: 
+          propertyDescription: Number. Height of building or part of building.
           minimumHeight: 0
           maximumHeight: 1
           extrusionScaleFactor: 1
@@ -294,14 +295,14 @@ MonoBehaviour:
           colliderType: 0
         materialOptions:
           style: 2
-          texturingType: 0
+          texturingType: 2
           materials:
           - Materials:
             - {fileID: 0}
           - Materials:
             - {fileID: 0}
-          atlasInfo: {fileID: 11400000, guid: c422f39ca8fe566479230c87805b3301, type: 2}
-          lightStyleOpacity: 1
+          atlasInfo: {fileID: 11400000, guid: 817b646f06c8845628ba7acf4819a67d, type: 2}
+          lightStyleOpacity: 0.7
           darkStyleOpacity: 1
           colorStyleColor: {r: 0.1764706, g: 0.8509805, b: 1, a: 1}
           samplePalettes: 0
@@ -318,7 +319,7 @@ MonoBehaviour:
         performanceOptions:
           isEnabled: 0
           entityPerCoroutine: 0
-        honorBuildingIdSetting: 0
+        honorBuildingIdSetting: 1
         buildingsWithUniqueIds: 1
         moveFeaturePositionTo: 0
         MeshModifiers: []
@@ -330,6 +331,22 @@ MonoBehaviour:
   _tileProvider: {fileID: 0}
   _previewOptions:
     isPreviewEnabled: 0
+--- !u!114 &8122019832646641723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094528686802348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e5ad82cbf201d640ac3373b0148a5b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _map: {fileID: 114105500206378512}
+  _locationStrings: []
+  _spawnScale: 100
+  _markerPrefab: {fileID: 5440182750737529048, guid: a5fc1029ff2b6064b8b200a6053b2277, type: 3}
 --- !u!114 &114086566548189782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,7 +456,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4730853386710314
 Transform:
   m_ObjectHideFlags: 0
@@ -979,7 +996,7 @@ MonoBehaviour:
   mapManager: {fileID: 114105500206378512}
   _deviceLocationProviderUnity: {fileID: 114811608996724456}
   _deviceLocationProviderAndroid: {fileID: 114352101756843672}
-  _editorLocationProvider: {fileID: 114275890671072080}
+  _editorLocationProvider: {fileID: 114658503893516242}
   _transformLocationProvider: {fileID: 114011132729224596}
   _dontDestroyOnLoad: 0
 --- !u!1 &1955583132415804
@@ -1089,7 +1106,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4109422646323390
 Transform:
   m_ObjectHideFlags: 0
@@ -1121,4 +1138,4 @@ MonoBehaviour:
   _autoFireEvent: 0
   _updateInterval: 0
   _sendEvent: 0
-  _targetTransform: {fileID: 0}
+  _targetTransform: {fileID: 4961856903295740}

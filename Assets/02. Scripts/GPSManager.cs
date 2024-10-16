@@ -153,11 +153,11 @@ public class GPSManager : MonoBehaviour
                 double lat = Input.location.lastData.latitude;
                 double lon = Input.location.lastData.longitude;
 
-                sampleText.text =
-                    "현재 위치: " +
-                    lat + " " +
-                    lon + " " +
-                    Input.location.lastData.horizontalAccuracy;
+                // sampleText.text =
+                //    "현재 위치: " +
+                //    lat + " " +
+                //    lon + " " +
+                //    Input.location.lastData.horizontalAccuracy;
 
                 // dbInstance.TestWriteDB(lat.ToString(), lon.ToString());
                 mapInstance.SetCurPos(lat, lon);
@@ -168,8 +168,10 @@ public class GPSManager : MonoBehaviour
                 }
                 abstractMap.Options.locationOptions.latitudeLongitude = lat + "," + lon;
                 abstractMap.UpdateMap();
+                sampleText.text = abstractMap.Options.extentOptions.extentType.ToString();
             }
 
+            sampleText.text = abstractMap.Options.extentOptions.extentType.ToString();
             yield return new WaitForSeconds(5);
         }
     }

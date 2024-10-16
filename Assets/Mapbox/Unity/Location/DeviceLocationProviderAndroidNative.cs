@@ -7,8 +7,11 @@
 	using System.IO;
 	using System.Text;
 	using Mapbox.Utils;
+    using TMPro;
+    using System.Diagnostics;
+    using Debug = UnityEngine.Debug;
 
-	public class DeviceLocationProviderAndroidNative : AbstractLocationProvider, IDisposable
+    public class DeviceLocationProviderAndroidNative : AbstractLocationProvider, IDisposable
 	{
 
 
@@ -43,6 +46,7 @@
 		private AndroidJavaObject _gpsInstance;
 		private AndroidJavaObject _sensorInstance;
 
+		public TextMeshProUGUI sampleText;
 
 		~DeviceLocationProviderAndroidNative() { Dispose(false); }
 		public void Dispose()
@@ -95,7 +99,13 @@
 		protected virtual void OnDestroy() { shutdown(); }
 
 
-		protected virtual void OnDisable() { shutdown(); }
+		protected virtual void OnDisable()
+		{
+			Debug.Log("Disable android location providor");
+            StackTrace stackTrace = new StackTrace();
+            Debug.Log(stackTrace.ToString());
+            shutdown();
+		}
 
 		protected virtual void Awake()
 		{
@@ -176,14 +186,14 @@
 			{
 				if (null == androidSensors)
 				{
-					Debug.LogError("Could not get class 'AndroidSensors'");
+					sampleText.text = "Could not get class 'AndroidSensors'";
 					return;
 				}
 
 				_sensorInstance = androidSensors.CallStatic<AndroidJavaObject>("instance", _activityContext);
 				if (null == _sensorInstance)
 				{
-					Debug.LogError("Could not get 'AndroidSensors' instance");
+                    sampleText.text ="Could not get 'AndroidSensors' instance";
 					return;
 				}
 
@@ -200,7 +210,7 @@
 				if (null == _activityContext)
 				{
 					SendLocation(_currentLocation);
-					yield return _wait60sec;
+					yield return _wait5sec;
 					getActivityContext();
 					continue;
 				}
@@ -208,7 +218,7 @@
 				if (null == _gpsInstance)
 				{
 					SendLocation(_currentLocation);
-					yield return _wait60sec;
+					yield return _wait5sec;
 					getGpsInstance();
 					continue;
 				}
@@ -263,7 +273,7 @@
 				}
 				catch (Exception ex)
 				{
-					Debug.LogErrorFormat("GPS plugin error: " + ex.ToString());
+                    sampleText.text = "GPS plugin error: " + ex.ToString();
 				}
 				yield return _waitUpdateTime;
 			}
