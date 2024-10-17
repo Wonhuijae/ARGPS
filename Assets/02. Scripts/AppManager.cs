@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Android;
+using UnityEngine.SceneManagement;
 
 public class AppManager : MonoBehaviour
 {
     bool waitForExit = false;
     int _layerMask;
-
-    public TextMeshProUGUI textUI;
+    public uint naviColor;
     public static AppManager Instance
     {
         get
@@ -30,10 +31,18 @@ public class AppManager : MonoBehaviour
             Destroy(gameObject);
         }
         _layerMask = 1 << 7;
+
+        DontDestroyOnLoad(gameObject);
+
+#if UNITY_ANDROID
+        ApplicationChrome.statusBarState = ApplicationChrome.States.VisibleOverContent;
+        RequestPermisson();
+#endif
     }
 
     private void Update()
     {
+#if UNITY_ANDROID
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             if (waitForExit) Application.Quit();
@@ -43,6 +52,7 @@ public class AppManager : MonoBehaviour
                 StartCoroutine(WaitInput());  
             }
         }
+#endif
 
         if (Input.GetMouseButtonDown(0))  // 마우스 왼쪽 버튼 클릭
         {
@@ -59,6 +69,80 @@ public class AppManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    void RequestPermisson()
+    {
+        // 위치 정보 권한 비허용 시
+        if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+        {
+            Permission.RequestUserPermission(Permission.FineLocation);
+            StartCoroutine(WaitForPermission());
+        }
+        else
+        {
+            TurnOnGPS();
+        }
+    }
+
+    IEnumerator WaitForPermission()
+    {
+        // 최초 권한 설정 확인
+        yield return new WaitForSeconds(5f);
+
+        while (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+        {
+            yield return new WaitForSeconds(2f);
+            ShowToastMsg("위치 권한을 허용해주세요.");
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            {
+                // 현재 액티비티
+                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                // 안드로이드의 작업 수행 명령어
+                AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent", "android.settings.APPLICATION_DETAILS_SETTINGS");
+
+                // 앱 패키지 이름으로 uri 생성
+                string packageName = Application.identifier;
+                AndroidJavaObject uri = new AndroidJavaClass("android.net.Uri").
+                                        CallStatic<AndroidJavaObject>("parse", "package:" + packageName);
+
+                intent.Call<AndroidJavaObject>("setData", uri);
+                // startActivity 메서드 실행, intent 수행
+                currentActivity.Call("startActivity", intent);
+            }
+        }
+
+        TurnOnGPS();
+    }
+
+    void TurnOnGPS()
+    {
+        // GPS Off시
+        if (!Input.location.isEnabledByUser)
+        {
+            StartCoroutine(WaitForGPS());
+        }
+        else
+        {
+            if (SceneManager.GetActiveScene().name == "TitleScene")  SceneManager.LoadScene("MainScene");
+        }
+    }
+
+    IEnumerator WaitForGPS()
+    {
+        while (!Input.location.isEnabledByUser)
+        {
+            ShowToastMsg("GPS를 켜주세요");
+
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent", "android.settings.LOCATION_SOURCE_SETTINGS");
+
+            currentActivity.Call("startActivity", intent);
+            yield return new WaitForSeconds(2f);
+        }
+
+        if (SceneManager.GetActiveScene().name == "TitleScene") SceneManager.LoadScene("MainScene");
     }
 
     IEnumerator WaitInput()
