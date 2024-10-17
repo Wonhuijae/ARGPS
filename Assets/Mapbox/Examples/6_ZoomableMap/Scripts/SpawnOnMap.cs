@@ -19,7 +19,7 @@
         protected List<Vector2d> _locations;
 
 		[SerializeField]
-        protected float _spawnScale = 100f;
+        protected float _spawnScale = 50f;
 
 		[SerializeField]
 		protected GameObject _markerPrefab;

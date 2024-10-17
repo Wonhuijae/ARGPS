@@ -16,6 +16,9 @@ public class NaverMap : MonoBehaviour
     public TextMeshProUGUI text;
     public RawImage mapImage;
 
+    string curAddress;
+    Dictionary<string, string> responseSave;
+
     public static NaverMap Instance
     {
         get
@@ -35,6 +38,7 @@ public class NaverMap : MonoBehaviour
 
     private double curLatitude; // 위도
     private double curLongitude; // 경도
+
     private int zoomLevel = 15;
     
     private string staticMapAPIUrl = "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster";
@@ -53,6 +57,10 @@ public class NaverMap : MonoBehaviour
 
         dbInstance = DBManager.Instance;
         appInstance = AppManager.Instance;
+
+        GetAddress(37.47734424196046, 126.86259523967601);
+
+        responseSave = new();
     }
 
     public void GetMapUrlAddress()
@@ -95,7 +103,7 @@ public class NaverMap : MonoBehaviour
         }
     }
 
-    public void GetAddress(float _latitude, float _longitude)
+    public void GetAddress(double _latitude, double _longitude)
     {
         /*
          * 네이버 Reverse Geocoding 사용 가이드
@@ -150,19 +158,36 @@ public class NaverMap : MonoBehaviour
                 string resposeBody = request.downloadHandler.text;
                 dbInstance.TestWriteDB("responseBody", resposeBody);
 
-                JObject json = JObject.Parse(resposeBody);
+                var json = JObject.Parse(resposeBody);
 
-                foreach (var p in json.Properties())
-                {
-                    dbInstance.TestWriteDB(p.Name, p.Value.ToString());
-                }
+                ParsingAddress(json);
             }
         }
     }
 
-    private void ParsingAddress(string _json)
+    private void ParsingAddress(JToken _json)
     {
-        Memo memo = new Memo();
+        var resultsArray = _json["results"] as JArray;
+        curAddress = ""; // 초기화
+
+        if (resultsArray != null && resultsArray.Count > 0)
+        {
+            responseSave.TryAdd("area1", resultsArray[0]["region"]["area1"]["name"].ToString());
+            responseSave.TryAdd("area2", resultsArray[0]["region"]["area2"]["name"].ToString());
+            responseSave.TryAdd("area3", resultsArray[0]["region"]["area3"]["name"].ToString());
+            responseSave.TryAdd("area4", resultsArray[0]["region"]["area4"]["name"].ToString());
+            responseSave.TryAdd("road", resultsArray[0]["land"]["name"].ToString());
+            responseSave.TryAdd("number", resultsArray[0]["land"]["number1"].ToString());
+
+            if (responseSave["area1"] != "") curAddress += responseSave["area1"] + " ";
+            if (responseSave["area2"] != "") curAddress += responseSave["area2"] + " ";
+            if (responseSave["area3"] != "") curAddress += responseSave["area3"] + " ";
+            if (responseSave["area4"] != "") curAddress += responseSave["area4"] + " ";
+            if (responseSave["road"] != "") curAddress += responseSave["road"] + " ";
+            if (responseSave["number"] != "") curAddress += responseSave["number"] + " ";
+
+            Debug.Log(curAddress);
+        }
     }
 
     public void SetCurPos(double _lati, double _long)
@@ -173,4 +198,21 @@ public class NaverMap : MonoBehaviour
         GetMapUrlAddress();
         //GetAddress(curLatitude, curLongitude);
     }
+
+    public string GetCurAddress()
+    {
+        return curAddress;
+    }
+    public string GetCurRoadName()
+    {
+        return responseSave["road"];
+    }
+
+    public int GetCurRoadNum()
+    {
+        return Convert.ToInt32(responseSave["number"]);
+    }
+
+    public double GetCurLatitude() { return curLatitude; }
+    public double GetCurLongitude() {  return curLongitude; }
 }

@@ -12,11 +12,13 @@ using UnityEngine;
 // 저장될 데이터 클래스
 public class Memo
 {
+    public int memoId;
     public string memo;
     public double latitude; // 위도
     public double longitude; // 경도
     public string adress; // 주소
-    public string road;
+    public string road; // 도로명
+    public int roadNum; // 도로 번호
 
     public Memo()
     {
@@ -30,9 +32,14 @@ public class Memo
         this.longitude = longitude;
     }
 
-    public void SetAdress()
+    public void SetMemoId(int idx)
     {
+        memoId = idx;
+    }
 
+    public void SetAdress(string curAddress)
+    {
+        adress = curAddress;
     }
 
     public Vector2d ConverToVector2d()
@@ -45,6 +52,8 @@ public class DBManager : MonoBehaviour
 {
     DatabaseReference dbReference;
     public SpawnMemo spawnMemo;
+
+    private int memoIdx;
 
     public static DBManager Instance
     {
@@ -68,21 +77,15 @@ public class DBManager : MonoBehaviour
         }
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
-
-        
-
-        Memo t = new Memo("평생학습원", 37.46668439003358, 126.86975035983849);
-        t.adress = "경기도 광명시 철망산로 2";
-        t.road = "철망산로";
-        WriteDB(t);
-        
         ReadDB();
     }
 
     public async void WriteDB(Memo _memo)
     {
+        _memo.SetMemoId(memoIdx++);
         string json = JsonUtility.ToJson(_memo);
         await dbReference.Child("Memos").Child(_memo.road).SetRawJsonValueAsync(json);
+        ReadDB();
     }
 
     private void ReadDB()
@@ -95,15 +98,18 @@ public class DBManager : MonoBehaviour
                     if (task.IsCompleted)
                     {
                         DataSnapshot snapshot = task.Result;
-                        Dictionary<string, Memo> memos = new Dictionary<string, Memo>();
+                        Dictionary<int, Memo> memos = new Dictionary<int, Memo>();
 
                         foreach(DataSnapshot s in snapshot.Children)
                         {
                             Memo m = JsonUtility.FromJson<Memo>(s.GetRawJsonValue());
-                            memos.Add(m.road, m);
+                            memos.Add(m.memoId, m);
                             spawnMemo.LoadMemo(m);
-                            Debug.Log(m.road);
+                            Debug.Log(m.memoId);
                         }
+
+                        memoIdx = memos.Count + 1;
+                        Debug.Log(memos.Count);
                     }
                     else
                     {

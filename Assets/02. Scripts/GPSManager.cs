@@ -171,7 +171,6 @@ public class GPSManager : MonoBehaviour
                 sampleText.text = abstractMap.Options.extentOptions.extentType.ToString();
             }
 
-            sampleText.text = abstractMap.Options.extentOptions.extentType.ToString();
             yield return new WaitForSeconds(5);
         }
     }
