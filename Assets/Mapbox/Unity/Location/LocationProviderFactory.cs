@@ -162,10 +162,10 @@ namespace Mapbox.Unity.Location
 			Match match = regex.Match(SystemInfo.operatingSystem); // eg 'Android OS 8.1.0 / API-27 (OPM2.171019.029/4657601)'
 			if (match.Success) { int.TryParse(match.Groups[0].Value, out AndroidApiVersion); }
 			Debug.LogFormat("{0} => API version: {1}", SystemInfo.operatingSystem, AndroidApiVersion);
-			sampleText.text = (Application.platform == RuntimePlatform.Android).ToString()
-				+ " " + (null != _deviceLocationProviderAndroid).ToString()
-				+ " " + (_deviceLocationProviderAndroid.enabled).ToString()
-				+ " " + (_deviceLocationProviderAndroid.transform.gameObject.activeInHierarchy).ToString();
+			// sampleText.text = (Application.platform == RuntimePlatform.Android).ToString()
+			//	+ " " + (null != _deviceLocationProviderAndroid).ToString()
+			//	+ " " + (_deviceLocationProviderAndroid.enabled).ToString()
+			//	+ " " + (_deviceLocationProviderAndroid.transform.gameObject.activeInHierarchy).ToString();
 
             // only inject native provider if platform requirement is met
             // and script itself as well as parent game object are active

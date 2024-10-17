@@ -37,7 +37,7 @@ public class GPSManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
 
         mapInstance = NaverMap.Instance;
         dbInstance = DBManager.Instance;

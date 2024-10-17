@@ -30,18 +30,22 @@ public class AppManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        _layerMask = 1 << 7;
-
         DontDestroyOnLoad(gameObject);
+
+        _layerMask = 1 << 7;
 
 #if UNITY_ANDROID
         ApplicationChrome.statusBarState = ApplicationChrome.States.VisibleOverContent;
         RequestPermisson();
+#elif UNITY_EDITOR
+        SceneManager.LoadScene("MainScene");
 #endif
     }
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "SplashScene") return;
+
 #if UNITY_ANDROID
         if(Input.GetKeyDown(KeyCode.Escape))
         {
