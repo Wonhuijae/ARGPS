@@ -167,8 +167,11 @@ namespace Mapbox.Unity.Location
 			//	+ " " + (_deviceLocationProviderAndroid.enabled).ToString()
 			//	+ " " + (_deviceLocationProviderAndroid.transform.gameObject.activeInHierarchy).ToString();
 
-            // only inject native provider if platform requirement is met
-            // and script itself as well as parent game object are active
+			// only inject native provider if platform requirement is met
+			// and script itself as well as parent game object are active
+
+			_deviceLocationProviderAndroid.enabled = true;
+
             if (Application.platform == RuntimePlatform.Android
 				&& null != _deviceLocationProviderAndroid
 				&& _deviceLocationProviderAndroid.enabled
@@ -181,7 +184,7 @@ namespace Mapbox.Unity.Location
 			{
 				Debug.LogFormat("LocationProviderFactory: Injected native Android DEVICE Location Provider - {0}", _deviceLocationProviderAndroid.GetType());
 				DefaultLocationProvider = _deviceLocationProviderAndroid;
-				sampleText.text = _deviceLocationProviderAndroid.transform.gameObject.name;
+				Debug.Log(_deviceLocationProviderAndroid.transform.gameObject.name);
 			}
 			else
 			{

@@ -15,6 +15,7 @@ public class SpawnMemo : SpawnOnMap
     public void LoadMemo(Memo _memo)
     {
         GameObject i = Instantiate(_markerPrefab);
+        i.GetComponentInChildren<MemoComp>().SetMemo(_memo);
         i.GetComponentInChildren<TextMeshProUGUI>().text = _memo.memo;
         string locString = _memo.latitude + "," + _memo.longitude;
         AddMarker(i, locString, _memo.ConverToVector2d());

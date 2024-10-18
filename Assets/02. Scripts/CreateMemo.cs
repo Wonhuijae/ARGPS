@@ -10,13 +10,15 @@ public class CreateMemo : MonoBehaviour
     private NaverMap naverMap;
 
     public TextMeshProUGUI addressText;
-    public TextMeshProUGUI inputText;
+    public TMP_InputField inputText;
 
     private void Awake()
     {
         dbInstance = DBManager.Instance;
         gpsInstance = GPSManager.Instance;
         naverMap = NaverMap.Instance;
+
+        gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -27,6 +29,8 @@ public class CreateMemo : MonoBehaviour
 
     public void SaveMemo()
     {
+        if (inputText.text == "") return;
+
         Memo newMemo = new Memo(inputText.text,
                                 naverMap.GetCurLatitude(),
                                 naverMap.GetCurLongitude());

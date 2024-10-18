@@ -10,7 +10,8 @@ public class AppManager : MonoBehaviour
 {
     bool waitForExit = false;
     int _layerMask;
-    public uint naviColor;
+    public GameObject readMemo;
+    private NaverMap naverMap;
     public static AppManager Instance
     {
         get
@@ -32,6 +33,8 @@ public class AppManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
+        naverMap = NaverMap.Instance;
+
         _layerMask = 1 << 7;
 
 #if UNITY_ANDROID
@@ -40,10 +43,13 @@ public class AppManager : MonoBehaviour
 #elif UNITY_EDITOR
         SceneManager.LoadScene("MainScene");
 #endif
+
+        readMemo.SetActive(false);
     }
 
     private void Update()
     {
+        Debug.Log("Update call");
         if (SceneManager.GetActiveScene().name == "SplashScene") return;
 
 #if UNITY_ANDROID
@@ -60,16 +66,21 @@ public class AppManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))  // 마우스 왼쪽 버튼 클릭
         {
+            Debug.Log("touch screen");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, _layerMask))
             {
-                Debug.Log("Hit 3D Object: " + hit.collider.name);
-
-                if (hit.transform.GetComponentInChildren<MemoComp>() != null)
+                Debug.Log("hit");
+                MemoComp memo = hit.transform.GetComponentInChildren<MemoComp>();
+                if (memo != null)
                 {
-                    Debug.Log( hit.transform.gameObject.GetComponentInChildren<TextMeshProUGUI>().text);
+                    memo.OnClickMarker(readMemo);
+                }
+                else
+                {
+                    Debug.Log("Is not Memo");
                 }
             }
         }

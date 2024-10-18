@@ -46,8 +46,6 @@
 		private AndroidJavaObject _gpsInstance;
 		private AndroidJavaObject _sensorInstance;
 
-		public TextMeshProUGUI sampleText;
-
 		~DeviceLocationProviderAndroidNative() { Dispose(false); }
 		public void Dispose()
 		{
@@ -71,6 +69,8 @@
 
 		private void shutdown()
 		{
+			Debug.Log("ShutDown");
+
 			try
 			{
 				lock (_lock)
@@ -186,14 +186,14 @@
 			{
 				if (null == androidSensors)
 				{
-					sampleText.text = "Could not get class 'AndroidSensors'";
+					Debug.Log("Could not get class 'AndroidSensors'");
 					return;
 				}
 
 				_sensorInstance = androidSensors.CallStatic<AndroidJavaObject>("instance", _activityContext);
 				if (null == _sensorInstance)
 				{
-                    sampleText.text ="Could not get 'AndroidSensors' instance";
+                    Debug.Log("Could not get 'AndroidSensors' instance");
 					return;
 				}
 
@@ -273,7 +273,7 @@
 				}
 				catch (Exception ex)
 				{
-                    sampleText.text = "GPS plugin error: " + ex.ToString();
+                    Debug.Log("GPS plugin error: " + ex.ToString());
 				}
 				yield return _waitUpdateTime;
 			}

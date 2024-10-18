@@ -78,13 +78,14 @@ public class DBManager : MonoBehaviour
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
         ReadDB();
+        // TestData();
     }
 
     public async void WriteDB(Memo _memo)
     {
         _memo.SetMemoId(memoIdx++);
         string json = JsonUtility.ToJson(_memo);
-        await dbReference.Child("Memos").Child(_memo.road).SetRawJsonValueAsync(json);
+        await dbReference.Child("Memos").Child(_memo.road).Child(_memo.memoId.ToString()).SetRawJsonValueAsync(json);
         ReadDB();
     }
 
@@ -100,12 +101,15 @@ public class DBManager : MonoBehaviour
                         DataSnapshot snapshot = task.Result;
                         Dictionary<int, Memo> memos = new Dictionary<int, Memo>();
 
-                        foreach(DataSnapshot s in snapshot.Children)
+                        foreach(DataSnapshot road in snapshot.Children)
                         {
-                            Memo m = JsonUtility.FromJson<Memo>(s.GetRawJsonValue());
-                            memos.Add(m.memoId, m);
-                            spawnMemo.LoadMemo(m);
-                            Debug.Log(m.memoId);
+                            foreach (DataSnapshot id in road.Children)
+                            {
+                                Memo m = JsonUtility.FromJson<Memo>(id.GetRawJsonValue());
+                                memos.Add(m.memoId, m);
+                                spawnMemo.LoadMemo(m);
+                                Debug.Log(m.memo);
+                            }
                         }
 
                         memoIdx = memos.Count + 1;
@@ -117,6 +121,33 @@ public class DBManager : MonoBehaviour
                     }
                 }
             );
+    }
+
+    void TestData()
+    {
+        // 37.4773667835683, 126.862609330332
+        Memo Test1 = new Memo("치과", 37.4773667835683, 126.86260933033213);
+        Memo Test2 = new Memo("집", 37.465673731942026, 126.86837305178426);
+        Memo Test3 = new Memo("횡단보도", 37.47689399460678, 126.86281652070888);
+        Memo Test4 = new Memo("철산역", 37.47616126242499, 126.86817094843643);
+
+        SetPropertits(Test1, 1, "경기도 광명시 오리로 902", "오리로", 902);
+        SetPropertits(Test2, 2, "경기도 광명시 오리로 801", "오리로", 801);
+        SetPropertits(Test3, 3, "경기도 광명시 시청로 20", "시청로", 20);
+        SetPropertits(Test4, 4, "경기도 광명시 철산로 13", "철산로", 13);
+
+        WriteDB(Test1);
+        WriteDB(Test2);
+        WriteDB(Test3);
+        WriteDB(Test4);
+    }
+
+    void SetPropertits(Memo _memo, int _id, string _adress, string _road, int _roadNum)
+    {
+        _memo.memoId = _id;
+        _memo.adress = _adress;
+        _memo.road = _road;
+        _memo.roadNum = _roadNum;
     }
 
     public async void TestWriteDB(string key, string value)

@@ -1,3 +1,4 @@
+using Mapbox.Examples;
 using Mapbox.Unity.Map;
 using Mapbox.Utils;
 using System.Collections;
@@ -31,13 +32,15 @@ public class GPSManager : MonoBehaviour
 
     public TextMeshProUGUI sampleText;
 
+    public GameObject player;
+
     void Awake()
     {
         if (Instance != this)
         {
             Destroy(gameObject);
         }
-        // DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
 
         mapInstance = NaverMap.Instance;
         dbInstance = DBManager.Instance;
@@ -83,18 +86,21 @@ public class GPSManager : MonoBehaviour
                 //    Input.location.lastData.horizontalAccuracy;
 
                 // dbInstance.TestWriteDB(lat.ToString(), lon.ToString());
+
                 mapInstance.SetCurPos(lat, lon);
-                if (abstractMap.InitializeOnStart == true)
-                {
-                    Vector2d initPos = new Vector2d(lat, lon);
-                    abstractMap.Initialize(initPos, 15);
-                }
-                abstractMap.Options.locationOptions.latitudeLongitude = lat + "," + lon;
-                abstractMap.UpdateMap();
-                sampleText.text = abstractMap.Options.extentOptions.extentType.ToString();
             }
 
             yield return new WaitForSeconds(5);
         }
+    }
+
+    public void PauseRotate()
+    {
+        player.GetComponent<RotateWithLocationProvider>().enabled = false;
+    }
+
+    public void ReplayRotate()
+    {
+        player.GetComponent<RotateWithLocationProvider>().enabled = true;
     }
 }
