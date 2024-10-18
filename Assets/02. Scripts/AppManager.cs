@@ -31,7 +31,7 @@ public class AppManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
 
         naverMap = NaverMap.Instance;
 
