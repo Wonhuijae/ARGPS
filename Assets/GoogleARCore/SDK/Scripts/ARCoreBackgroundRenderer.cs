@@ -43,7 +43,8 @@ namespace GoogleARCore
 
         private ARCameraBackground m_BackgroundRenderer;
 
-        private void OnEnable()
+        private void On
+            ()
         {
             if (BackgroundMaterial == null)
             {

@@ -6,6 +6,12 @@ using UnityEngine;
 public class MemoComp : MonoBehaviour
 {
     Memo memo;
+    AppManager appManager;
+
+    private void Awake()
+    {
+        appManager = AppManager.Instance;
+    }
 
     private void LateUpdate()
     {
@@ -16,6 +22,8 @@ public class MemoComp : MonoBehaviour
     {
         if (_readMemo == null )Debug.Log("Parameter _readMemo null");
 
+        _readMemo.SetActive(true);
+        Debug.Log(_readMemo.activeInHierarchy);
 
         if (memo == null)
         {
@@ -29,7 +37,8 @@ public class MemoComp : MonoBehaviour
             else if (o.gameObject.name == "Text_Content") o.text = memo.memo;
         }
 
-        _readMemo.SetActive(true);
+        
+        Debug.Log("Method Call");
     }
 
     public void SetMemo(Memo _memo)

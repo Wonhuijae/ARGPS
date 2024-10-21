@@ -38,7 +38,6 @@ public class AppManager : MonoBehaviour
         _layerMask = 1 << 7;
 
 #if UNITY_ANDROID
-        ApplicationChrome.statusBarState = ApplicationChrome.States.VisibleOverContent;
         RequestPermisson();
 #elif UNITY_EDITOR
         SceneManager.LoadScene("MainScene");
@@ -49,7 +48,6 @@ public class AppManager : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Update call");
         if (SceneManager.GetActiveScene().name == "SplashScene") return;
 
 #if UNITY_ANDROID
@@ -72,10 +70,11 @@ public class AppManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, _layerMask))
             {
-                Debug.Log("hit");
+                Debug.Log(hit.transform.gameObject.name);
                 MemoComp memo = hit.transform.GetComponentInChildren<MemoComp>();
                 if (memo != null)
                 {
+                    Debug.Log("Is it Memo");
                     memo.OnClickMarker(readMemo);
                 }
                 else
@@ -84,6 +83,11 @@ public class AppManager : MonoBehaviour
                 }
             }
         }
+    }
+    public void SetVisible()
+    {
+        readMemo.SetActive(true);
+        Debug.Log(readMemo.activeInHierarchy);
     }
 
     void RequestPermisson()

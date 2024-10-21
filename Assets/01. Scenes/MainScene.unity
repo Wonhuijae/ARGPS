@@ -2506,6 +2506,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1065209300}
   m_CullTransparentMesh: 1
+--- !u!1 &1076467003 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5997195839769100863, guid: 5adaa05d85fc17c4aa6aaf09e38e6705, type: 3}
+  m_PrefabInstance: {fileID: 4525688747839910526}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1187902142 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3508222242363529443, guid: 5adaa05d85fc17c4aa6aaf09e38e6705, type: 3}
@@ -3567,6 +3572,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4918042877642069051, guid: 783b0da26b911c641989f5e20de6c509, type: 3}
+      propertyPath: readMemo
+      value: 
+      objectReference: {fileID: 1076467003}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3667,10 +3676,6 @@ PrefabInstance:
     - target: {fileID: 5997195839769100863, guid: 5adaa05d85fc17c4aa6aaf09e38e6705, type: 3}
       propertyPath: m_Name
       value: Panel_ReadMemo
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997195839769100863, guid: 5adaa05d85fc17c4aa6aaf09e38e6705, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

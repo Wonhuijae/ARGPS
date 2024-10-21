@@ -12,6 +12,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-common:21.0.0' // Assets/Firebase/Editor/AppDependencies.xml:13
     implementation 'com.google.firebase:firebase-database:21.0.0' // Assets/Firebase/Editor/DatabaseDependencies.xml:13
     implementation 'com.google.firebase:firebase-database-unity:12.2.1' // Assets/Firebase/Editor/DatabaseDependencies.xml:22
+    implementation 'androidx.work:work-runtime:2.8.0'
+
 // Android Resolver Dependencies End
 **DEPS**}
 
