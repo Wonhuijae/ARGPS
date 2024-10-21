@@ -1,4 +1,5 @@
 using Mapbox.Examples;
+using Mapbox.Unity.Location;
 using Mapbox.Unity.Map;
 using Mapbox.Utils;
 using System.Collections;
@@ -30,7 +31,8 @@ public class GPSManager : MonoBehaviour
     private AppManager appInstance;
     public AbstractMap abstractMap;
 
-    public TextMeshProUGUI sampleText;
+    public GameObject curPosText;
+    public GameObject panelWriteMemo;
 
     public GameObject player;
 
@@ -65,27 +67,17 @@ public class GPSManager : MonoBehaviour
 
             if (maxWait < 1)
             {
-                sampleText.text = "시간초과";
                 yield break;
             }
 
             if (Input.location.status == LocationServiceStatus.Failed)
             {
-                sampleText.text = "위치 정보를 가져오지 못했습니다.";
                 yield break;
             }
             else
             {
                 double lat = Input.location.lastData.latitude;
                 double lon = Input.location.lastData.longitude;
-
-                // sampleText.text =
-                //    "현재 위치: " +
-                //    lat + " " +
-                //    lon + " " +
-                //    Input.location.lastData.horizontalAccuracy;
-
-                // dbInstance.TestWriteDB(lat.ToString(), lon.ToString());
 
                 mapInstance.SetCurPos(lat, lon);
             }
@@ -94,13 +86,19 @@ public class GPSManager : MonoBehaviour
         }
     }
 
-    public void PauseRotate()
+    public void OnWriteMemo()
     {
         player.GetComponent<RotateWithLocationProvider>().enabled = false;
+        curPosText.SetActive(false);
+        panelWriteMemo.SetActive(true);
+
+
     }
 
-    public void ReplayRotate()
+    public void OffWriteMemo()
     {
         player.GetComponent<RotateWithLocationProvider>().enabled = true;
+        curPosText.SetActive(true);
+        panelWriteMemo.SetActive(false);
     }
 }

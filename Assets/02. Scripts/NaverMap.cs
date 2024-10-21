@@ -44,6 +44,8 @@ public class NaverMap : MonoBehaviour
     private string clientID = "m43fqgqgf6";
     private string clientSecret = "MPaASwSsykcbLnaIyfjLUl5vzsvsEIA3Lrzp8mZV";
 
+    public TextMeshProUGUI adressText;
+
     private void Awake()
     {
         if (Instance != this)
@@ -54,8 +56,6 @@ public class NaverMap : MonoBehaviour
 
         dbInstance = DBManager.Instance;
         appInstance = AppManager.Instance;
-
-        GetAddress(37.47734424196046, 126.86259523967601);
 
         responseSave = new();
     }
@@ -173,6 +173,7 @@ public class NaverMap : MonoBehaviour
             if (responseSave["road"] != "") curAddress += responseSave["road"] + " ";
             if (responseSave["number"] != "") curAddress += responseSave["number"] + " ";
 
+            adressText.text = curAddress;
             Debug.Log(curAddress);
         }
     }

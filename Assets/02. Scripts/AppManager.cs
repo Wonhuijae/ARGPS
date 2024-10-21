@@ -1,3 +1,5 @@
+using Mapbox.Map;
+using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,6 +26,10 @@ public class AppManager : MonoBehaviour
         }
     }
     private static AppManager m_instance;
+
+    public AbstractMap map;
+    public float zoomSpeed = 0.1f;
+    public GameObject curAddress;
 
     private void Awake()
     {
@@ -60,6 +66,23 @@ public class AppManager : MonoBehaviour
                 StartCoroutine(WaitInput());  
             }
         }
+
+        // 멀티 터치 확인
+        if (Input.touchCount == 2)
+        {
+            // 두 개의 터치 입력을 받아 핀치 제스처를 처리
+            Touch touch1 = Input.GetTouch(0);
+            Touch touch2 = Input.GetTouch(1);
+
+            // 터치 사이의 이전 거리와 현재 거리를 계산
+            float prevTouchDeltaMag = (touch1.position - touch1.deltaPosition - (touch2.position - touch2.deltaPosition)).magnitude;
+            float touchDeltaMag = (touch1.position - touch2.position).magnitude;
+
+            // 줌 변경 값을 계산하고 적용.
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+            map.UpdateMap(map.Zoom + deltaMagnitudeDiff * zoomSpeed);
+            Debug.Log(deltaMagnitudeDiff * zoomSpeed);
+        }
 #endif
 
         if (Input.GetMouseButtonDown(0))  // 마우스 왼쪽 버튼 클릭
@@ -76,6 +99,7 @@ public class AppManager : MonoBehaviour
                 {
                     Debug.Log("Is it Memo");
                     memo.OnClickMarker(readMemo);
+                    OnReadMemo();
                 }
                 else
                 {
@@ -84,10 +108,17 @@ public class AppManager : MonoBehaviour
             }
         }
     }
-    public void SetVisible()
+
+    public void OnReadMemo()
     {
         readMemo.SetActive(true);
-        Debug.Log(readMemo.activeInHierarchy);
+        curAddress.SetActive(false);
+    }
+
+    public void OffReadMemo()
+    {
+        curAddress.SetActive(true);
+        readMemo.SetActive(false);
     }
 
     void RequestPermisson()

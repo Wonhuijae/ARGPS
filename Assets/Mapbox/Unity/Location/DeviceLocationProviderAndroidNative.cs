@@ -134,7 +134,7 @@
 					_pollLocation = StartCoroutine(locationRoutine());
 				}
 			}
-		}
+        }
 
 
 		private void getActivityContext()
@@ -218,7 +218,7 @@
 				if (null == _gpsInstance)
 				{
 					SendLocation(_currentLocation);
-					yield return _wait5sec;
+                    yield return _wait5sec;
 					getGpsInstance();
 					continue;
 				}
@@ -243,7 +243,7 @@
 					_currentLocation.SatellitesUsed = 0;
 
 					SendLocation(_currentLocation);
-					_gpsInstance.Call("stopLocationListeners");
+                    _gpsInstance.Call("stopLocationListeners");
 					yield return _wait5sec;
 					_gpsInstance.Call("startLocationListeners", _updateDistanceInMeters, _updateTimeInMilliSeconds);
 					yield return _wait1sec;
@@ -270,7 +270,7 @@
 
 					_currentLocation.TimestampDevice = UnixTimestampUtils.To(DateTime.UtcNow);
 					SendLocation(_currentLocation);
-				}
+                }
 				catch (Exception ex)
 				{
                     Debug.Log("GPS plugin error: " + ex.ToString());
