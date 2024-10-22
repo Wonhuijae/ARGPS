@@ -109,6 +109,11 @@ public class AppManager : MonoBehaviour
         }
     }
 
+    public void InitZoom()
+    {
+        map.UpdateMap(map.InitialZoom);
+    }
+
     public void OnReadMemo()
     {
         readMemo.SetActive(true);
