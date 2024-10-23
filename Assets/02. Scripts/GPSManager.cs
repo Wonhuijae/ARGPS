@@ -91,8 +91,6 @@ public class GPSManager : MonoBehaviour
         player.GetComponent<RotateWithLocationProvider>().enabled = false;
         curPosText.SetActive(false);
         panelWriteMemo.SetActive(true);
-
-
     }
 
     public void OffWriteMemo()
