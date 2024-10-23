@@ -8,6 +8,7 @@ public class CreateMemo : MonoBehaviour
     private DBManager dbInstance;
     private GPSManager gpsInstance;
     private NaverMap naverMap;
+    private AppManager appInstance;
 
     public TextMeshProUGUI addressText;
     public TMP_InputField inputText;
@@ -17,6 +18,7 @@ public class CreateMemo : MonoBehaviour
         dbInstance = DBManager.Instance;
         gpsInstance = GPSManager.Instance;
         naverMap = NaverMap.Instance;
+        appInstance = AppManager.Instance;
 
         gameObject.SetActive(false);
     }
@@ -36,6 +38,7 @@ public class CreateMemo : MonoBehaviour
                                 naverMap.GetCurLongitude());
         newMemo.SetAdress(naverMap.GetCurAddress());
         newMemo.road = naverMap.GetCurRoadName();
+        newMemo.roadNum = naverMap.GetCurRoadNum();
 
         dbInstance.WriteDB(newMemo);
     }

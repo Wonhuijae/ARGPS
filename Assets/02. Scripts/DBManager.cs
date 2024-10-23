@@ -16,7 +16,7 @@ public class Memo
     public string memo;
     public double latitude; // 위도
     public double longitude; // 경도
-    public string adress; // 주소
+    public string address; // 주소
     public string road; // 도로명
     public int roadNum; // 도로 번호
 
@@ -39,12 +39,24 @@ public class Memo
 
     public void SetAdress(string curAddress)
     {
-        adress = curAddress;
+        address = curAddress;
     }
 
     public Vector2d ConverToVector2d()
     {
         return new Vector2d(latitude, longitude);
+    }
+
+    public bool Equals(Memo other)
+    {
+        if(other == null) return false;
+
+        return memo == other.memo &&
+            latitude == other.latitude &&
+            longitude == other.longitude &&
+            address == other.address &&
+            road == other.road &&
+            roadNum == other.roadNum;
     }
 }
 
@@ -54,6 +66,10 @@ public class DBManager : MonoBehaviour
     public SpawnMemo spawnMemo;
 
     private int memoIdx;
+
+    AppManager appInstance;
+
+    List<Memo> memoInDB;
 
     public static DBManager Instance
     {
@@ -78,15 +94,22 @@ public class DBManager : MonoBehaviour
 
         dbReference = FirebaseDatabase.DefaultInstance.RootReference;
         ReadDB();
+        appInstance = AppManager.Instance;
         // TestData();
+
+        memoInDB = new();
     }
 
     public async void WriteDB(Memo _memo)
     {
+        if (!IsCanWrite(_memo)) return;
+
         _memo.SetMemoId(memoIdx++);
         string json = JsonUtility.ToJson(_memo);
         await dbReference.Child("Memos").Child(_memo.road).Child(_memo.memoId.ToString()).SetRawJsonValueAsync(json);
-        ReadDB();
+        appInstance.ShowToastMsg("메모 저장 완료!");
+        memoInDB.Add(_memo);
+        spawnMemo.LoadMemo(_memo);
     }
 
     private void ReadDB()
@@ -108,12 +131,10 @@ public class DBManager : MonoBehaviour
                                 Memo m = JsonUtility.FromJson<Memo>(id.GetRawJsonValue());
                                 memos.Add(m.memoId, m);
                                 spawnMemo.LoadMemo(m);
-                                Debug.Log(m.memo);
                             }
                         }
 
                         memoIdx = memos.Count + 1;
-                        Debug.Log(memos.Count);
                     }
                     else
                     {
@@ -122,6 +143,17 @@ public class DBManager : MonoBehaviour
                 }
             );
     }
+
+    private bool IsCanWrite(Memo createdMemo)
+    {
+        foreach(var i in memoInDB)
+        {
+            if (i.Equals(createdMemo)) return false;
+        }
+
+        return true;
+    }
+
 
     void TestData()
     {
@@ -145,7 +177,7 @@ public class DBManager : MonoBehaviour
     void SetPropertits(Memo _memo, int _id, string _adress, string _road, int _roadNum)
     {
         _memo.memoId = _id;
-        _memo.adress = _adress;
+        _memo.address = _adress;
         _memo.road = _road;
         _memo.roadNum = _roadNum;
     }

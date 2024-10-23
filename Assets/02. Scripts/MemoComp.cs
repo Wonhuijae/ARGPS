@@ -33,7 +33,7 @@ public class MemoComp : MonoBehaviour
 
         foreach(var o in _readMemo.GetComponentsInChildren<TextMeshProUGUI>())
         {
-            if (o.gameObject.name == "Text_RoadPos") o.text = memo.adress;
+            if (o.gameObject.name == "Text_RoadPos") o.text = memo.address;
             else if (o.gameObject.name == "Text_Content") o.text = memo.memo;
         }
 
