@@ -186,6 +186,7 @@ public class DBManager : MonoBehaviour
     {
         await dbReference.Child("Test").Child(key).SetValueAsync(value);
     }
+
     private void TestReadDB()
     {
         FirebaseDatabase.DefaultInstance

@@ -159,12 +159,12 @@ public class NaverMap : MonoBehaviour
 
         if (resultsArray != null && resultsArray.Count > 0)
         {
-            responseSave.TryAdd("area1", resultsArray[0]["region"]["area1"]["name"].ToString());
-            responseSave.TryAdd("area2", resultsArray[0]["region"]["area2"]["name"].ToString());
-            responseSave.TryAdd("area3", resultsArray[0]["region"]["area3"]["name"].ToString());
-            responseSave.TryAdd("area4", resultsArray[0]["region"]["area4"]["name"].ToString());
-            responseSave.TryAdd("road", resultsArray[0]["land"]["name"].ToString());
-            responseSave.TryAdd("number", resultsArray[0]["land"]["number1"].ToString());
+            responseSave["area1"] = resultsArray[0]["region"]["area1"]["name"].ToString();
+            responseSave["area2"] = resultsArray[0]["region"]["area2"]["name"].ToString();
+            responseSave["area3"] = resultsArray[0]["region"]["area3"]["name"].ToString();
+            responseSave["area4"] = resultsArray[0]["region"]["area4"]["name"].ToString();
+            responseSave["road"] = resultsArray[0]["land"]["name"].ToString();
+            responseSave["number"] = resultsArray[0]["land"]["number1"].ToString();
 
             if (responseSave["area1"] != "") curAddress += responseSave["area1"] + " ";
             if (responseSave["area2"] != "") curAddress += responseSave["area2"] + " ";
